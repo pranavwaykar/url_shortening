@@ -1,0 +1,21 @@
+import StatCardList from "./StatCardList";
+
+export default function Stats() {
+  return (
+    <section className="mt-[156px] bg-subtlegray justify-center z-0">
+      {/* TEXT SECTION */}
+      <div className="text-center space-y-2 flex flex-col items-center">
+        <h3 className="text-verydarkviolet mt-44 md:mt-[300px] text-[27px] lg:text-[2.5rem] font-bold">
+          Advanced Statistics
+        </h3>
+        <p className="text-grayishviolet text-[18px] w-[90%] lg:w-[38%] mx-auto font-[500] mb-[32px] leading-7">
+          Track how your links are performing across the web with our advanced
+          statistics dashboard.
+        </p>
+      </div>
+      <StatCardList />
+    </section>
+  );
+}
+
+// REMEMBER: You changed thing from padding at the section class level to margin at the h3 level
