@@ -1,10 +1,9 @@
 import { useState } from "react";
 import Button from "./Button";
-import ShortenedLink from "./ShortenedLink";
 
 interface ShortenerFormProps {
-  link: string;
-  onLink: (link: string) => void;
+  linkEntered: string;
+  onLinkEntered: (link: string) => void;
   shortened: string;
   onShortened: (shortened: string) => void;
 }
@@ -43,27 +42,30 @@ async function shortenURL(lengthyLink: string) {
 }
 
 export default function ShortenerForm({
-  link,
-  onLink,
+  linkEntered,
+  onLinkEntered,
   shortened,
   onShortened,
 }: ShortenerFormProps) {
+  const [link, setLink] = useState("");
   const [error, setError] = useState(false);
 
   // BASIC validation thingy, I know that I would still have to update it and whatnot.
   function handleSubmit(e: any): void {
     e.preventDefault();
-    if (link === "") setError(true);
-    if (link === "" || error) return;
-
-    // Once the link is a sensible link ...
+    onLinkEntered(link);
     const actualLink: any = shortenURL(link);
     onShortened(actualLink);
+    setLink("");
+    if (linkEntered === "") setError(true);
+    if (linkEntered === "" || error) return;
+
+    // Once the link is a sensible link ...
     console.log(shortened);
   }
 
   function handleChange(e: any): void {
-    onLink(e.target.value);
+    setLink(e.target.value);
     if (link === "") setError(false);
     const linkRegex =
       /^(http|https):\/\/[a-zA-Z0-9\-.]+\.[a-zA-Z]{2,}(\/\S*)?$/;
@@ -73,7 +75,7 @@ export default function ShortenerForm({
   return (
     <>
       <form
-        className="grid grid-cols-1 md:grid-cols-8 gap-3 md:gap-2 absolute left-[50%] -translate-x-[50%] translate-y-[84px] w-[88%] p-6 md:py-10 md:px-14 rounded-xl md:rounded-lg bg-form-pattern-m md:bg-form-pattern object-cover object-center bg-darkviolet bg-no-repeat"
+        className="grid grid-cols-1 mx-auto md:grid-cols-8 gap-3 md:gap-2 w-[88%] p-6 md:py-10 md:px-14 rounded-xl -translate-y-[72px] md:rounded-lg bg-form-pattern-m md:bg-form-pattern object-cover object-center bg-darkviolet bg-no-repeat"
         action="#"
         onSubmit={handleSubmit}
       >
@@ -83,10 +85,11 @@ export default function ShortenerForm({
           className={`rounded-lg md:col-span-7 pl-3 md:pl-8 outline-none h-12 md:h-16 ${
             error ? "ring-2 ring-rose-600 ring-offset-1" : null
           }`}
+          value={link}
           onChange={handleChange}
         />
         {error && (
-          <em className="absolute bottom-3 left-6 md:left-14 text-sm text-red">
+          <em className="md:absolute bottom-3 left-6 md:left-14 text-sm text-red">
             {!link ? "Please add a link" : "Ensure it starts with https://"}
           </em>
         )}
