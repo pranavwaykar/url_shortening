@@ -13,8 +13,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [linkEntered, setLinkEntered] = useState("");
-
+  const [link, setLink] = useState("");
   // const [links, setLinks] = useState([]);
   // const [linkEls, setLinkEls] = useState({});
 
@@ -31,20 +30,16 @@ export default function Home() {
       <Header toggleMenu={handleMenuButtonClicked} />
       {menuOpen && <OpenMenu />}
       <Hero />
-      <div className="bg-subtlegray mt-[156px]">
-        <ShortenerForm
-          linkEntered={linkEntered}
-          onLinkEntered={setLinkEntered}
-          shortened={shortened}
-          onShortened={setShortened}
-          linkEls={linkEls}
-          onLinkEls={setLinkEls}
-        />
-        {typeof shortened === "object" && "then" in shortened && (
-          <ShortenedLinksList linkEntered={linkEntered} shortened={shortened} />
-        )}
-        <Stats />
-      </div>
+      <ShortenerForm
+        link={link}
+        onLink={setLink}
+        shortened={shortened}
+        onShortened={setShortened}
+      />
+      {typeof shortened === "object" && "then" in shortened && (
+        <ShortenedLinksList link={link} shortened={shortened} />
+      )}
+      <Stats />
       <CallToAction2 />
       <Footer />
     </>
