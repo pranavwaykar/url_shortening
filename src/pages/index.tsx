@@ -16,7 +16,10 @@ export default function Home() {
   const [linkEntered, setLinkEntered] = useState("");
 
   // const [links, setLinks] = useState([]);
-  const [linkEls, setLinkEls] = useState({});
+  // const [linkEls, setLinkEls] = useState({});
+
+  // Another approach: making the dataset an array of object.
+  const [linkEls, setLinkEls] = useState([]);
   const [shortened, setShortened] = useState("");
 
   function handleMenuButtonClicked(): void {
@@ -34,6 +37,8 @@ export default function Home() {
           onLinkEntered={setLinkEntered}
           shortened={shortened}
           onShortened={setShortened}
+          linkEls={linkEls}
+          onLinkEls={setLinkEls}
         />
         {typeof shortened === "object" && "then" in shortened && (
           <ShortenedLinksList linkEntered={linkEntered} shortened={shortened} />

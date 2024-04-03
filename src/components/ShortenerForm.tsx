@@ -1,11 +1,19 @@
 import { useState } from "react";
 import Button from "./Button";
 
+type ShortenedLinkElement = {
+  url: string;
+  shortened: string;
+};
+
 interface ShortenerFormProps {
   linkEntered: string;
   onLinkEntered: (link: string) => void;
   shortened: string;
   onShortened: (shortened: string) => void;
+  linkEls: ShortenedLinkElement[];
+  onLinkEls: (linkEls: ShortenedLinkElement[]) => void;
+  // onLinkEls: React.Dispatch<React.SetStateAction<ShortenedLinkElement[]>>;
 }
 
 /*
@@ -46,9 +54,20 @@ export default function ShortenerForm({
   onLinkEntered,
   shortened,
   onShortened,
+  linkEls,
+  onLinkEls,
 }: ShortenerFormProps) {
   const [link, setLink] = useState("");
   const [error, setError] = useState(false);
+
+  // const addNewLink = ([key, value]: [string, string]): void => {
+  //   // Use the functional update to ensure the state is updated correctly
+  //   onLinkEls((prevLinkEls: LinkElsType) => ({ ...prevLinkEls, [key]: value }));
+  // };
+
+  // function addNewLink() {
+
+  // }
 
   // BASIC validation thingy, I know that I would still have to update it and whatnot.
   function handleSubmit(e: any): void {
