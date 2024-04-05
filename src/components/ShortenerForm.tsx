@@ -2,9 +2,10 @@ import { useCallback, useEffect, useState } from "react";
 import Button from "./Button";
 import ShortenedLink from "./ShortenedLink";
 
-type ShortenedLinkElement = {
+export type ShortenedLinkElement = {
+  id: string;
   url: string;
-  shortened: string;
+  shortenURL: string;
 };
 
 interface ShortenerFormProps {
@@ -15,6 +16,7 @@ interface ShortenerFormProps {
   linkEntered: string;
   onLinkEntered: (linkEntered: string) => void;
   resolvedShortened: string | null;
+  onResolvedShortened: (resolvedShortened: string | null) => void;
   linkEls: ShortenedLinkElement[];
   onLinkEls: (linkEls: ShortenedLinkElement[]) => void;
   // onLinkEls: React.Dispatch<React.SetStateAction<ShortenedLinkElement[]>>;
@@ -53,44 +55,53 @@ async function shortenURL(lengthyLink: string) {
   }
 }
 
+let theeeLink = null;
+
 export default function ShortenerForm({
   linkEntered,
   onLinkEntered,
   shortened,
-  resolvedShortened,
   onShortened,
   linkEls,
   onLinkEls,
+  resolvedShortened,
+  onResolvedShortened,
 }: ShortenerFormProps) {
   const [error, setError] = useState(false);
   const [link, setLink] = useState("");
 
   const addNewLink = useCallback(
     (link: any, shortened: any) => {
-      if (link === "" && shortened === null) onLinkEls([]);
-      onLinkEls((prev: any) => [
-        ...prev,
-        { id: crypto.randomUUID(), url: link, shortenURL: shortened },
-      ]);
+      if (link === "" || shortened === null) onLinkEls([]);
+      if (shortened)
+        onLinkEls((prev: ShortenedLinkElement[] | []) => [
+          ...prev,
+          { id: crypto.randomUUID(), url: link, shortenURL: shortened },
+        ]);
     },
     [onLinkEls]
   );
 
+  // console.log(linkEntered, shortened);
+
   useEffect(() => {
-    addNewLink(linkEntered, resolvedShortened);
-  }, [addNewLink, resolvedShortened]);
+    // if (!linkEntered || !resolvedShortened) onLinkEls([]);
+    if (resolvedShortened) addNewLink(linkEntered, resolvedShortened);
+  }, [addNewLink, linkEntered, resolvedShortened]);
 
   // BASIC validation thingy, I know that I would still have to update it and whatnot.
   function handleSubmit(e: any): void {
     e.preventDefault();
+
+    //validation
+    if (linkEntered === "") setError(true);
+    if (error) return;
+
     onLinkEntered(link);
     // Once the link is a sensible link ...
     const actualLink: any = shortenURL(link);
     onShortened(actualLink);
     setLink("");
-
-    if (link === "") setError(true);
-    if (linkEntered === "" || error) return;
 
     console.log(shortened);
   }
@@ -103,10 +114,13 @@ export default function ShortenerForm({
     setError(!linkRegex.test(link));
   }
 
+  if (!resolvedShortened)
+    return <p className="text-center text-xs text-green-400">Loading...</p>;
+
   return (
     <>
       <form
-        className="grid grid-cols-1 md:grid-cols-8 gap-3 md:gap-2 absolute left-[50%] -translate-x-[50%] translate-y-[84px] w-[88%] p-6 md:py-10 md:px-14 rounded-xl md:rounded-lg bg-form-pattern-m md:bg-form-pattern object-cover object-center bg-darkviolet bg-no-repeat"
+        className="grid grid-cols-1 mx-auto md:grid-cols-8 gap-3 md:gap-2 w-[88%] p-6 md:py-10 md:px-14 rounded-xl -translate-y-[72px] md:rounded-lg bg-form-pattern-m md:bg-form-pattern object-cover object-center bg-darkviolet bg-no-repeat"
         action="#"
         onSubmit={handleSubmit}
       >
@@ -120,7 +134,7 @@ export default function ShortenerForm({
           onChange={handleChange}
         />
         {error && (
-          <em className="absolute bottom-3 left-6 md:left-14 text-sm text-red">
+          <em className="md:absolute bottom-3 left-6 md:left-14 text-sm text-red">
             {!link ? "Please add a link" : "Ensure it starts with https://"}
           </em>
         )}
