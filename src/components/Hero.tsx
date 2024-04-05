@@ -20,6 +20,7 @@ export default function Hero() {
         src="./images/illustration-working.svg"
         width={733}
         height={482}
+        priority={true}
         alt="Illustration of a person working"
         className="translate-x-20 md:translate-x-0 translate-y-[6.1vh] md:translate-y-0 scale-125 sm:scale-100 lg:scale-100 md:scale-[.80] xl:translate-x-24 overflow-y-hidden" // might change lg to xl
       />

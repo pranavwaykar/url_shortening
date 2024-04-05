@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Button from "./Button";
 import ShortenedLink from "./ShortenedLink";
 
@@ -12,6 +12,9 @@ interface ShortenerFormProps {
   onLink: (link: string) => void;
   shortened: string;
   onShortened: (shortened: string) => void;
+  linkEntered: string;
+  onLinkEntered: (linkEntered: string) => void;
+  resolvedShortened: string | null;
   linkEls: ShortenedLinkElement[];
   onLinkEls: (linkEls: ShortenedLinkElement[]) => void;
   // onLinkEls: React.Dispatch<React.SetStateAction<ShortenedLinkElement[]>>;
@@ -51,38 +54,49 @@ async function shortenURL(lengthyLink: string) {
 }
 
 export default function ShortenerForm({
-  link,
-  onLink,
+  linkEntered,
+  onLinkEntered,
   shortened,
+  resolvedShortened,
   onShortened,
   linkEls,
   onLinkEls,
 }: ShortenerFormProps) {
   const [error, setError] = useState(false);
+  const [link, setLink] = useState("");
 
-  // const addNewLink = ([key, value]: [string, string]): void => {
-  //   // Use the functional update to ensure the state is updated correctly
-  //   onLinkEls((prevLinkEls: LinkElsType) => ({ ...prevLinkEls, [key]: value }));
-  // };
+  const addNewLink = useCallback(
+    (link: any, shortened: any) => {
+      if (link === "" && shortened === null) onLinkEls([]);
+      onLinkEls((prev: any) => [
+        ...prev,
+        { id: crypto.randomUUID(), url: link, shortenURL: shortened },
+      ]);
+    },
+    [onLinkEls]
+  );
 
-  // function addNewLink() {
-
-  // }
+  useEffect(() => {
+    addNewLink(linkEntered, resolvedShortened);
+  }, [addNewLink, resolvedShortened]);
 
   // BASIC validation thingy, I know that I would still have to update it and whatnot.
   function handleSubmit(e: any): void {
     e.preventDefault();
-    if (link === "") setError(true);
-    if (link === "" || error) return;
-
+    onLinkEntered(link);
     // Once the link is a sensible link ...
     const actualLink: any = shortenURL(link);
     onShortened(actualLink);
+    setLink("");
+
+    if (link === "") setError(true);
+    if (linkEntered === "" || error) return;
+
     console.log(shortened);
   }
 
   function handleChange(e: any): void {
-    onLink(e.target.value);
+    setLink(e.target.value);
     if (link === "") setError(false);
     const linkRegex =
       /^(http|https):\/\/[a-zA-Z0-9\-.]+\.[a-zA-Z]{2,}(\/\S*)?$/;
@@ -102,6 +116,7 @@ export default function ShortenerForm({
           className={`rounded-lg md:col-span-7 pl-3 md:pl-8 outline-none h-12 md:h-16 ${
             error ? "ring-2 ring-rose-600 ring-offset-1" : null
           }`}
+          value={link}
           onChange={handleChange}
         />
         {error && (

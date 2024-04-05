@@ -1,6 +1,6 @@
 import { Inter } from "next/font/google";
 import Header from "@/components/Header";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import OpenMenu from "@/components/OpenMenu";
 import Hero from "@/components/Hero";
 import ShortenerForm from "@/components/ShortenerForm";
@@ -13,9 +13,10 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [link, setLink] = useState("");
-  // const [links, setLinks] = useState([]);
-  // const [linkEls, setLinkEls] = useState({});
+  const [linkEntered, setLinkEntered] = useState("");
+  const [resolvedShortened, setResolvedShortened] = useState<string | null>(
+    null
+  );
 
   // Another approach: making the dataset an array of object.
   const [linkEls, setLinkEls] = useState([]);
@@ -25,19 +26,32 @@ export default function Home() {
     setMenuOpen((closed) => !closed);
   }
 
+  // Solving the populated link elements (linkEls) problem.
+  useEffect(() => {
+    setLinkEls([]);
+  }, []);
+
   return (
     <>
       <Header toggleMenu={handleMenuButtonClicked} />
       {menuOpen && <OpenMenu />}
       <Hero />
       <ShortenerForm
-        link={link}
-        onLink={setLink}
+        linkEntered={linkEntered}
+        onLinkEntered={setLinkEntered}
         shortened={shortened}
+        resolvedShortened={resolvedShortened}
         onShortened={setShortened}
+        linkEls={linkEls}
+        onLinkEls={setLinkEls} // We would leave it like that for now
       />
       {typeof shortened === "object" && "then" in shortened && (
-        <ShortenedLinksList link={link} shortened={shortened} />
+        <ShortenedLinksList
+          linkEntered={linkEntered}
+          shortened={shortened}
+          resolvedShortened={resolvedShortened}
+          onResolvedShortened={setResolvedShortened}
+        />
       )}
       <Stats />
       <CallToAction2 />
