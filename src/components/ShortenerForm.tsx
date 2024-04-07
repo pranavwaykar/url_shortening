@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Button from "./Button";
 import ShortenedLink from "./ShortenedLink";
 
@@ -19,7 +19,6 @@ interface ShortenerFormProps {
   onResolvedShortened: (resolvedShortened: string | null) => void;
   linkEls: ShortenedLinkElement[];
   onLinkEls: (linkEls: ShortenedLinkElement[]) => void;
-  // onLinkEls: React.Dispatch<React.SetStateAction<ShortenedLinkElement[]>>;
 }
 
 /*
@@ -28,6 +27,7 @@ MY DREAM HELPER FILE
 -> The async function that fetches the shortened link for me.
 */
 
+// TO BE EXPORTED TO HELPER.
 async function shortenURL(lengthyLink: string) {
   try {
     const res = await fetch(
@@ -55,7 +55,15 @@ async function shortenURL(lengthyLink: string) {
   }
 }
 
-let theeeLink = null;
+function pruneEnteredURL(URL: string): string {
+  let prunedURL;
+  if (window.innerWidth <= 890 && URL.length >= 32) {
+    prunedURL = URL.slice(0, 32) + "...";
+    console.log(prunedURL);
+    return prunedURL;
+  }
+  return URL;
+}
 
 export default function ShortenerForm({
   linkEntered,
@@ -82,19 +90,22 @@ export default function ShortenerForm({
     [onLinkEls]
   );
 
-  // console.log(linkEntered, shortened);
+  useEffect(() => {
+    if (resolvedShortened)
+      // addNewLink(pruneEnteredURL(linkEntered), resolvedShortened);
+      addNewLink(pruneEnteredURL(linkEntered), resolvedShortened);
+  }, [resolvedShortened]);
 
   useEffect(() => {
-    // if (!linkEntered || !resolvedShortened) onLinkEls([]);
-    if (resolvedShortened) addNewLink(linkEntered, resolvedShortened);
-  }, [addNewLink, linkEntered, resolvedShortened]);
+    if (linkEntered) console.log(pruneEnteredURL(linkEntered));
+  }, [linkEntered]);
 
   // BASIC validation thingy, I know that I would still have to update it and whatnot.
   function handleSubmit(e: any): void {
     e.preventDefault();
 
     //validation
-    if (linkEntered === "") setError(true);
+    if (link === "") setError(true);
     if (error) return;
 
     onLinkEntered(link);
@@ -110,17 +121,14 @@ export default function ShortenerForm({
     setLink(e.target.value);
     if (link === "") setError(false);
     const linkRegex =
-      /^(http|https):\/\/[a-zA-Z0-9\-.]+\.[a-zA-Z]{2,}(\/\S*)?$/;
+      /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
     setError(!linkRegex.test(link));
   }
-
-  if (!resolvedShortened)
-    return <p className="text-center text-xs text-green-400">Loading...</p>;
 
   return (
     <>
       <form
-        className="grid grid-cols-1 mx-auto md:grid-cols-8 gap-3 md:gap-2 w-[88%] p-6 md:py-10 md:px-14 rounded-xl -translate-y-[72px] md:rounded-lg bg-form-pattern-m md:bg-form-pattern object-cover object-center bg-darkviolet bg-no-repeat"
+        className="grid grid-cols-1 mx-auto md:grid-cols-8 gap-3 justify-between w-[88%] p-6 md:py-10 md:px-14 rounded-xl -translate-y-[72px] md:rounded-lg bg-form-pattern-m md:bg-form-pattern object-cover object-center bg-darkviolet bg-no-repeat"
         action="#"
         onSubmit={handleSubmit}
       >
@@ -135,15 +143,11 @@ export default function ShortenerForm({
         />
         {error && (
           <em className="md:absolute bottom-3 left-6 md:left-14 text-sm text-red">
-            {!link ? "Please add a link" : "Ensure it starts with https://"}
+            {!link ? "Please add a link" : "Please enter a valid web address"}
           </em>
         )}
         <Button type="submit">Shorten it!</Button>
       </form>
-      {/* Would smarten up the logic real soon */}
-      {/* {shortened && <ShortenedLink shortened={shortened} link={link} />} */}
     </>
   );
 }
-
-// Logging the shortened link to console!

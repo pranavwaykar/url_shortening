@@ -38,11 +38,6 @@ export default function Home() {
     setMenuOpen((closed) => !closed);
   }
 
-  // Solving the populated link elements (linkEls) problem.
-  // useEffect(() => {
-  //   setLinkEls([]);
-  // }, []);
-
   return (
     <>
       <Header toggleMenu={handleMenuButtonClicked} />

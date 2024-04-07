@@ -23,6 +23,16 @@ export default function ShortenedLink({
   const [copied, setCopied] = useState<boolean>(false);
   console.log(linkItem);
 
+  if (resolvedShortened === undefined)
+    return (
+      <p className="text-center text-sm text-red">
+        Oops, cannot shorten this link!
+      </p>
+    );
+
+  if (!resolvedShortened)
+    return <p className="text-center text-sm text-green-400">Loading...</p>;
+
   return (
     <div className="flex flex-col md:flex-row shadow-md bg-white justify-between md:items-center w-[88%] rounded-md mx-auto md:py-4 md:px-8">
       <p className="p-4 md:p-0">{linkEntered}</p>

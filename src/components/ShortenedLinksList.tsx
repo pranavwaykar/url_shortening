@@ -32,10 +32,15 @@ export default function ShortenedLinksList({
     console.log(resolvedShortened); // this ain't logging in for some reason.
   }, [shortened, resolvedShortened, onResolvedShortened]);
 
-  if (!resolvedShortened)
-    return <p className="text-center text-xs text-green-400">Loading...</p>;
+  if (resolvedShortened === undefined)
+    return (
+      <p className="text-center text-sm text-red">
+        Oops, cannot shorten this link!
+      </p>
+    );
 
-  if (shortened) console.log(resolvedShortened, linkEls);
+  if (!resolvedShortened)
+    return <p className="text-center text-sm text-green-400">Loading...</p>;
 
   return (
     <section className="flex flex-col mx-auto w-full -translate-y-[72px] mt-8 space-y-4">
@@ -45,6 +50,7 @@ export default function ShortenedLinksList({
           shortened={shortened}
           linkEntered={linkItem.url}
           linkEls={linkEls}
+          linkItem={linkItem}
           resolvedShortened={linkItem.shortenURL}
           onResolvedShortened={onResolvedShortened}
         />
