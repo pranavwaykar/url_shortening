@@ -1,23 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import Button from "./Button";
-import { ShortenedLinkElement } from "./ShortenerForm";
 
 interface ShortenedLinkProps {
-  shortened: Promise<string> | string;
   linkEntered: string;
   resolvedShortened: string | null;
-  onResolvedShortened: (resolvedShortened: string) => void;
-  linkEls: ShortenedLinkElement[];
   linkItem: any;
 }
 
 export default function ShortenedLink({
-  shortened,
   linkEntered,
   resolvedShortened,
-  onResolvedShortened,
-  linkEls,
   linkItem,
 }: ShortenedLinkProps) {
   const [copied, setCopied] = useState<boolean>(false);

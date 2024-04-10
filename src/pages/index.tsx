@@ -1,13 +1,13 @@
 import { Inter } from "next/font/google";
-import Header from "@/components/Header";
+import Header from "@/components/header/Header";
 import { useEffect, useState } from "react";
-import OpenMenu from "@/components/OpenMenu";
+import OpenMenu from "@/components/header/OpenMenu";
 import Hero from "@/components/Hero";
-import ShortenerForm from "@/components/ShortenerForm";
-import Stats from "@/components/Stats";
+import ShortenerForm from "@/components/shortener/ShortenerForm";
+import Stats from "@/components/stats/Stats";
 import CallToAction2 from "@/components/CallToAction2";
 import Footer from "@/components/Footer";
-import ShortenedLinksList from "@/components/ShortenedLinksList";
+import ShortenedLinksList from "@/components/shortener/ShortenedLinksList";
 // import useLocalStorageState from "@/hooks/useLocalStorageState";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -18,9 +18,6 @@ export default function Home() {
   const [resolvedShortened, setResolvedShortened] = useState<string | null>(
     null
   );
-
-  // Another approach: making the dataset an array of object.
-  // const [linkEls, setLinkEls] = useState([]);
   const [linkEls, setLinkEls] = useState<string[]>(() => {
     if (typeof window !== "undefined") {
       const storedLinkEls = localStorage.getItem("listElements");
@@ -50,15 +47,12 @@ export default function Home() {
           linkEntered={linkEntered}
           onLinkEntered={setLinkEntered}
           resolvedShortened={resolvedShortened}
-          onResolvedShortened={setResolvedShortened}
           shortened={shortened}
           onShortened={setShortened}
-          linkEls={linkEls}
           onLinkEls={setLinkEls}
         />
         <ShortenedLinksList
           linkEls={linkEls}
-          linkEntered={linkEntered}
           shortened={shortened}
           resolvedShortened={resolvedShortened}
           onResolvedShortened={setResolvedShortened}

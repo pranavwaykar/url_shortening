@@ -1,4 +1,4 @@
-import Button from "./Button";
+import Button from "../Button";
 import { motion } from "framer-motion";
 
 export default function OpenMenu() {

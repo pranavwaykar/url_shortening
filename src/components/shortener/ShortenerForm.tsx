@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import Button from "./Button";
-import ShortenedLink from "./ShortenedLink";
+import Button from "../Button";
+import { shortenURL, pruneEnteredURL } from "@/utils/helper";
 
 export type ShortenedLinkElement = {
   id: string;
@@ -14,43 +14,7 @@ interface ShortenerFormProps {
   linkEntered: string;
   onLinkEntered: (linkEntered: string) => void;
   resolvedShortened: string | null;
-  onResolvedShortened: (resolvedShortened: string | null) => void;
-  linkEls: any[];
   onLinkEls: any;
-}
-
-/*
-MY DREAM HELPER FILE
--> Something that helps me abbreviate long links for mobile.
--> The async function that fetches the shortened link for me.
-*/
-
-// TO BE EXPORTED TO HELPER.
-async function shortenURL(lengthyLink: string) {
-  try {
-    const res = await fetch(
-      "https://url-shortener-service.p.rapidapi.com/shorten",
-      {
-        method: "POST",
-        headers: {
-          "content-type": "application/x-www-form-urlencoded",
-          "X-RapidAPI-Key":
-            "c714f15a4fmsh834b9c29cf34deap1d7308jsned36279fefe2",
-          "X-RapidAPI-Host": "url-shortener-service.p.rapidapi.com",
-        },
-        body: new URLSearchParams({
-          url: lengthyLink,
-        }),
-      }
-    );
-
-    const result = await res.text();
-    const actualLink = JSON.parse(result).result_url;
-    console.log(actualLink);
-    return actualLink;
-  } catch (err) {
-    console.error(`Error: ${err}`);
-  }
 }
 
 export default function ShortenerForm({
@@ -58,32 +22,11 @@ export default function ShortenerForm({
   onLinkEntered,
   shortened,
   onShortened,
-  linkEls,
   onLinkEls,
   resolvedShortened,
-  onResolvedShortened,
 }: ShortenerFormProps) {
   const [error, setError] = useState(false);
   const [link, setLink] = useState("");
-
-  const [browserWidth, setBrowserWidth] = useState(0);
-
-  useEffect(() => {
-    window.addEventListener("resize", () => {
-      setBrowserWidth(window.innerWidth);
-    });
-    console.log(browserWidth);
-  }, [browserWidth]);
-
-  function pruneEnteredURL(URL: string): string {
-    let prunedURL;
-    if (browserWidth <= 680 && URL.length >= 32) {
-      prunedURL = URL.slice(0, 32) + "...";
-      console.log(prunedURL);
-      return prunedURL;
-    }
-    return URL;
-  }
 
   const addNewLink = useCallback(
     (link: any, shortened: any) => {
@@ -97,10 +40,16 @@ export default function ShortenerForm({
     [onLinkEls]
   );
 
+  /*eslint-disable*/
   useEffect(() => {
     if (resolvedShortened)
       addNewLink(pruneEnteredURL(linkEntered), resolvedShortened);
   }, [resolvedShortened]);
+  /*eslint-enable*/
+
+  useEffect(() => {
+    if (linkEntered) console.log(pruneEnteredURL(linkEntered));
+  }, [linkEntered]);
 
   // BASIC validation thingy, I know that I would still have to update it and whatnot.
   function handleSubmit(e: any): void {

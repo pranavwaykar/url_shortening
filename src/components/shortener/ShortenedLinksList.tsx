@@ -1,24 +1,19 @@
 import { useEffect } from "react";
 import ShortenedLink from "./ShortenedLink";
-import { ShortenedLinkElement } from "./ShortenerForm";
 
 interface ShortenedLinkProps {
   linkEls: any[];
   shortened: Promise<string> | string;
-  linkEntered: string;
   resolvedShortened: string | null;
   onResolvedShortened: (resolvedShortened: string) => void;
 }
 
 export default function ShortenedLinksList({
   shortened,
-  linkEntered,
   resolvedShortened,
   onResolvedShortened,
   linkEls,
 }: ShortenedLinkProps) {
-  // if (!linkEls) return;
-
   useEffect(() => {
     if (typeof shortened === "object" && "then" in shortened) {
       // If shortened is a promise, wait for it to resolve
@@ -47,20 +42,11 @@ export default function ShortenedLinksList({
       {linkEls?.map((linkItem) => (
         <ShortenedLink
           key={linkItem.id}
-          shortened={shortened}
           linkEntered={linkItem.url}
-          linkEls={linkEls}
           linkItem={linkItem}
           resolvedShortened={linkItem.shortenURL}
-          onResolvedShortened={onResolvedShortened}
         />
       ))}
-      {/* <ShortenedLink
-        shortened={shortened}
-        linkEntered={linkEntered}
-        resolvedShortened={resolvedShortened}
-        onResolvedShortened={onResolvedShortened}
-      /> */}
     </section>
   );
 }

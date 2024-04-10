@@ -1,5 +1,5 @@
 import { ImFacebook2 } from "react-icons/im";
-import Logo from "./Logo";
+import Logo from "./header/Logo";
 import { RiTwitterXFill } from "react-icons/ri";
 import { GrPinterest } from "react-icons/gr";
 import { FaInstagram } from "react-icons/fa";
