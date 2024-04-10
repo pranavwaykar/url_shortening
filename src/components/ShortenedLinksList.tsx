@@ -3,7 +3,7 @@ import ShortenedLink from "./ShortenedLink";
 import { ShortenedLinkElement } from "./ShortenerForm";
 
 interface ShortenedLinkProps {
-  linkEls: ShortenedLinkElement[];
+  linkEls: any[];
   shortened: Promise<string> | string;
   linkEntered: string;
   resolvedShortened: string | null;
@@ -39,12 +39,12 @@ export default function ShortenedLinksList({
       </p>
     );
 
-  if (!resolvedShortened)
+  if (!resolvedShortened && !linkEls)
     return <p className="text-center text-sm text-green-400">Loading...</p>;
 
   return (
     <section className="flex flex-col mx-auto w-full -translate-y-[72px] mt-8 space-y-4">
-      {linkEls.map((linkItem) => (
+      {linkEls?.map((linkItem) => (
         <ShortenedLink
           key={linkItem.id}
           shortened={shortened}

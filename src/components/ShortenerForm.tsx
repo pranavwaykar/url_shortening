@@ -9,16 +9,14 @@ export type ShortenedLinkElement = {
 };
 
 interface ShortenerFormProps {
-  link: string;
-  onLink: (link: string) => void;
   shortened: string;
   onShortened: (shortened: string) => void;
   linkEntered: string;
   onLinkEntered: (linkEntered: string) => void;
   resolvedShortened: string | null;
   onResolvedShortened: (resolvedShortened: string | null) => void;
-  linkEls: ShortenedLinkElement[];
-  onLinkEls: (linkEls: ShortenedLinkElement[]) => void;
+  linkEls: any[];
+  onLinkEls: any;
 }
 
 /*
@@ -55,16 +53,6 @@ async function shortenURL(lengthyLink: string) {
   }
 }
 
-function pruneEnteredURL(URL: string): string {
-  let prunedURL;
-  if (window.innerWidth <= 890 && URL.length >= 32) {
-    prunedURL = URL.slice(0, 32) + "...";
-    console.log(prunedURL);
-    return prunedURL;
-  }
-  return URL;
-}
-
 export default function ShortenerForm({
   linkEntered,
   onLinkEntered,
@@ -78,11 +66,30 @@ export default function ShortenerForm({
   const [error, setError] = useState(false);
   const [link, setLink] = useState("");
 
+  const [browserWidth, setBrowserWidth] = useState(0);
+
+  useEffect(() => {
+    window.addEventListener("resize", () => {
+      setBrowserWidth(window.innerWidth);
+    });
+    console.log(browserWidth);
+  }, [browserWidth]);
+
+  function pruneEnteredURL(URL: string): string {
+    let prunedURL;
+    if (browserWidth <= 680 && URL.length >= 32) {
+      prunedURL = URL.slice(0, 32) + "...";
+      console.log(prunedURL);
+      return prunedURL;
+    }
+    return URL;
+  }
+
   const addNewLink = useCallback(
     (link: any, shortened: any) => {
       if (link === "" || shortened === null) onLinkEls([]);
       if (shortened)
-        onLinkEls((prev: ShortenedLinkElement[] | []) => [
+        onLinkEls((prev: any[]) => [
           ...prev,
           { id: crypto.randomUUID(), url: link, shortenURL: shortened },
         ]);
@@ -92,13 +99,8 @@ export default function ShortenerForm({
 
   useEffect(() => {
     if (resolvedShortened)
-      // addNewLink(pruneEnteredURL(linkEntered), resolvedShortened);
       addNewLink(pruneEnteredURL(linkEntered), resolvedShortened);
   }, [resolvedShortened]);
-
-  useEffect(() => {
-    if (linkEntered) console.log(pruneEnteredURL(linkEntered));
-  }, [linkEntered]);
 
   // BASIC validation thingy, I know that I would still have to update it and whatnot.
   function handleSubmit(e: any): void {

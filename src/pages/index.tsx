@@ -8,7 +8,7 @@ import Stats from "@/components/Stats";
 import CallToAction2 from "@/components/CallToAction2";
 import Footer from "@/components/Footer";
 import ShortenedLinksList from "@/components/ShortenedLinksList";
-import { useLocalStorageState } from "@/hooks/useLocalStorageState";
+// import useLocalStorageState from "@/hooks/useLocalStorageState";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,19 +20,21 @@ export default function Home() {
   );
 
   // Another approach: making the dataset an array of object.
-  const [linkEls, setLinkEls] = useState([]);
+  // const [linkEls, setLinkEls] = useState([]);
+  const [linkEls, setLinkEls] = useState<string[]>(() => {
+    if (typeof window !== "undefined") {
+      const storedLinkEls = localStorage.getItem("listElements");
+      return storedLinkEls ? JSON.parse(storedLinkEls) : [];
+    }
+
+    return []; //fallback for server side.
+  });
   const [shortened, setShortened] = useState("");
 
-  // Setting things to localStorage
   useEffect(() => {
-    localStorage.setItem("listElements", JSON.stringify(linkEls));
+    if (typeof window !== "undefined")
+      localStorage.setItem("listElements", JSON.stringify(linkEls));
   }, [linkEls]);
-
-  // Getting things from localStorage
-  useEffect(() => {
-    const storedLinkEls = localStorage.getItem("listElements");
-    if (storedLinkEls) setLinkEls(JSON.parse(storedLinkEls));
-  }, []);
 
   function handleMenuButtonClicked(): void {
     setMenuOpen((closed) => !closed);
@@ -43,7 +45,7 @@ export default function Home() {
       <Header toggleMenu={handleMenuButtonClicked} />
       {menuOpen && <OpenMenu />}
       <Hero />
-      <div className="bg-subtlegray mt-[156px]">
+      <section className="bg-subtlegray mt-[156px]">
         <ShortenerForm
           linkEntered={linkEntered}
           onLinkEntered={setLinkEntered}
@@ -52,19 +54,17 @@ export default function Home() {
           shortened={shortened}
           onShortened={setShortened}
           linkEls={linkEls}
-          onLinkEls={setLinkEls} // We would leave it like that for now
+          onLinkEls={setLinkEls}
         />
-        {typeof shortened === "object" && "then" in shortened && (
-          <ShortenedLinksList
-            linkEls={linkEls}
-            linkEntered={linkEntered}
-            shortened={shortened}
-            resolvedShortened={resolvedShortened}
-            onResolvedShortened={setResolvedShortened}
-          />
-        )}
+        <ShortenedLinksList
+          linkEls={linkEls}
+          linkEntered={linkEntered}
+          shortened={shortened}
+          resolvedShortened={resolvedShortened}
+          onResolvedShortened={setResolvedShortened}
+        />
         <Stats />
-      </div>
+      </section>
       <CallToAction2 />
       <Footer />
     </>
