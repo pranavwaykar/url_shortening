@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Logo from "./Logo";
 import { AiOutlineMenu } from "react-icons/ai";
 import Button from "../Button";
