@@ -39,3 +39,11 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 # url_shortening
+
+Screenshots:
+
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/c60fc20d-19a1-4057-8e10-0c37e7ec10bf" />
+
+<img width="1440" alt="image" src="https://github.com/user-attachments/assets/ada66525-fef2-4fec-8371-ecb92c0a82e2" />
+
+
